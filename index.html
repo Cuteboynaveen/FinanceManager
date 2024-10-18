@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Finance Manager</title>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='style.css')}}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#add-income-btn').click(function() {
+                var amount = $('#income-amount').val();
+                $.ajax({
+                    type: 'POST',
+                    url: '/add_income',
+                    data: {amount: amount},
+                    success: function(data) {
+                        // Don't update the finances here
+                    }
+                });
+            });
+
+            $('#add-expense-btn').click(function() {
+                var category = $('#expense-category').val();
+                var amount = $('#expense-amount').val();
+                $.ajax({
+                    type: 'POST',
+                    url: '/add_expense',
+                    data: {category: category, amount: amount},
+                    success: function(data) {
+                        // Don't update the finances here
+                    }
+                });
+            });
+
+            $('#display-finances-btn').click(function() {
+                $.ajax({
+                    type: 'GET',
+                    url: '/display_finances',
+                    success: function(data) {
+                        updateFinances(data);
+                    }
+                });
+            });
+
+            function updateFinances(data) {
+                $('#display-finances').html(`
+                    <p>Total Income: $${data.data.income}</p>
+                    <p>Total Expenses:</p>
+                    <pre>${data.data.expenses}</pre>
+                    <p>Current Balance: $${data.data.balance}</p>
+                `);
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>Finance Manager</h1>
+    <form>
+        <label for="income-amount">Add Income:</label>
+        <input type="number" id="income-amount" name="amount">
+        <button id="add-income-btn">Add</button>
+    </form>
+    <form>
+        <label for="expense-category">Add Expense:</label>
+        <input type="text" id="expense-category" name="category">
+        <label for="expense-amount">Amount:</label>
+        <input type="number" id="expense-amount" name="amount">
+        <button id="add-expense-btn">Add</button>
+    </form>
+    <button id="display-finances-btn">Display Finances</button>
+    <div id="display-finances"></div>
+</body>
+</html>
